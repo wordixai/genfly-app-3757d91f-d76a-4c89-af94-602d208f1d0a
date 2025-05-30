@@ -125,6 +125,68 @@
     </div>
   </div>
 
+  <!-- Edit Patient Modal -->
+  <div id="edit-patient-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Patient</h2>
+        <span class="close-edit-modal close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="edit-patient-form">
+          <div class="form-group">
+            <label for="edit-patient-name">Patient Name</label>
+            <input type="text" id="edit-patient-name" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-patient-age">Age</label>
+            <input type="number" id="edit-patient-age" min="0" max="120" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-patient-gender">Gender</label>
+            <select id="edit-patient-gender" required>
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-patient-department">Department</label>
+            <select id="edit-patient-department" required>
+              <option value="">Select Department</option>
+              <option value="general">General Medicine</option>
+              <option value="cardiology">Cardiology</option>
+              <option value="orthopedics">Orthopedics</option>
+              <option value="pediatrics">Pediatrics</option>
+              <option value="neurology">Neurology</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-patient-priority">Priority</label>
+            <select id="edit-patient-priority" required>
+              <option value="normal">Normal</option>
+              <option value="urgent">Urgent</option>
+              <option value="emergency">Emergency</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-patient-status">Status</label>
+            <select id="edit-patient-status" required>
+              <option value="waiting">Waiting</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Patient</button>
+            <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

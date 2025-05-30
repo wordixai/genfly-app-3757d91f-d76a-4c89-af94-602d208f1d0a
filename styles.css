@@ -88,6 +88,11 @@ header {
   opacity: 0.9;
 }
 
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
 .btn-primary {
   background-color: var(--primary-color);
 }

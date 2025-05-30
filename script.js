@@ -10,12 +10,17 @@ const queueListEl = document.getElementById('queue-list');
 const departmentsContainerEl = document.getElementById('departments-container');
 const addPatientBtn = document.getElementById('add-patient');
 const addPatientModal = document.getElementById('add-patient-modal');
+const editPatientModal = document.getElementById('edit-patient-modal');
 const closeModalBtn = document.querySelector('.close-modal');
+const closeEditModalBtn = document.querySelector('.close-edit-modal');
 const cancelAddBtn = document.getElementById('cancel-add');
+const cancelEditBtn = document.getElementById('cancel-edit');
 const patientForm = document.getElementById('patient-form');
+const editPatientForm = document.getElementById('edit-patient-form');
 
 // App State
 let patients = [];
+let currentEditingPatientId = null;
 let departments = [
   { id: 'general', name: 'General Medicine', capacity: 5, currentPatients: 0 },
   { id: 'cardiology', name: 'Cardiology', capacity: 3, currentPatients: 0 },
@@ -179,27 +184,44 @@ function setupEventListeners() {
     addPatientModal.style.display = 'flex';
   });
   
-  // Close modal
+  // Close modals
   closeModalBtn.addEventListener('click', () => {
     addPatientModal.style.display = 'none';
   });
   
-  // Cancel add patient
+  closeEditModalBtn.addEventListener('click', () => {
+    editPatientModal.style.display = 'none';
+  });
+  
+  // Cancel buttons
   cancelAddBtn.addEventListener('click', () => {
     addPatientModal.style.display = 'none';
     patientForm.reset();
   });
   
-  // Submit patient form
+  cancelEditBtn.addEventListener('click', () => {
+    editPatientModal.style.display = 'none';
+    editPatientForm.reset();
+  });
+  
+  // Submit forms
   patientForm.addEventListener('submit', (e) => {
     e.preventDefault();
     addNewPatient();
   });
   
-  // Close modal when clicking outside
+  editPatientForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    updatePatient();
+  });
+  
+  // Close modals when clicking outside
   window.addEventListener('click', (e) => {
     if (e.target === addPatientModal) {
       addPatientModal.style.display = 'none';
+    }
+    if (e.target === editPatientModal) {
+      editPatientModal.style.display = 'none';
     }
   });
   
@@ -320,33 +342,111 @@ function formatStatus(status) {
 
 // Get action buttons based on patient status
 function getActionButtons(patient) {
+  let buttons = `<button class="btn btn-secondary btn-sm edit-btn" data-id="${patient.id}">Edit</button>`;
+  
   if (patient.status === 'waiting') {
-    return `
+    buttons += `
       <button class="btn btn-primary btn-sm start-btn" data-id="${patient.id}">Start</button>
       <button class="btn btn-danger btn-sm cancel-btn" data-id="${patient.id}">Cancel</button>
     `;
   } else if (patient.status === 'in-progress') {
-    return `
+    buttons += `
       <button class="btn btn-success btn-sm complete-btn" data-id="${patient.id}">Complete</button>
     `;
   } else {
-    return `
+    buttons += `
       <button class="btn btn-secondary btn-sm remove-btn" data-id="${patient.id}">Remove</button>
     `;
   }
+  
+  return buttons;
 }
 
 // Handle queue action buttons
 function handleQueueActions(e) {
+  const patientId = e.target.dataset.id;
+  
   if (e.target.classList.contains('start-btn')) {
-    startTreatment(e.target.dataset.id);
+    startTreatment(patientId);
   } else if (e.target.classList.contains('complete-btn')) {
-    completeTreatment(e.target.dataset.id);
+    completeTreatment(patientId);
   } else if (e.target.classList.contains('cancel-btn')) {
-    cancelPatient(e.target.dataset.id);
+    cancelPatient(patientId);
   } else if (e.target.classList.contains('remove-btn')) {
-    removePatient(e.target.dataset.id);
+    removePatient(patientId);
+  } else if (e.target.classList.contains('edit-btn')) {
+    openEditModal(patientId);
   }
+}
+
+// Open edit modal and populate with patient data
+function openEditModal(patientId) {
+  const patient = patients.find(p => p.id == patientId);
+  if (!patient) return;
+  
+  // Set current editing patient ID
+  currentEditingPatientId = patientId;
+  
+  // Populate form fields
+  document.getElementById('edit-patient-name').value = patient.name;
+  document.getElementById('edit-patient-age').value = patient.age;
+  document.getElementById('edit-patient-gender').value = patient.gender;
+  document.getElementById('edit-patient-department').value = patient.department;
+  document.getElementById('edit-patient-priority').value = patient.priority;
+  document.getElementById('edit-patient-status').value = patient.status;
+  
+  // Show modal
+  editPatientModal.style.display = 'flex';
+}
+
+// Update patient data
+function updatePatient() {
+  if (!currentEditingPatientId) return;
+  
+  const patientIndex = patients.findIndex(p => p.id == currentEditingPatientId);
+  if (patientIndex === -1) return;
+  
+  const patient = patients[patientIndex];
+  const oldDepartment = patient.department;
+  const oldStatus = patient.status;
+  
+  // Get form values
+  const name = document.getElementById('edit-patient-name').value;
+  const age = document.getElementById('edit-patient-age').value;
+  const gender = document.getElementById('edit-patient-gender').value;
+  const department = document.getElementById('edit-patient-department').value;
+  const priority = document.getElementById('edit-patient-priority').value;
+  const status = document.getElementById('edit-patient-status').value;
+  
+  // Update patient object
+  patient.name = name;
+  patient.age = parseInt(age);
+  patient.gender = gender;
+  patient.department = department;
+  patient.priority = priority;
+  
+  // Handle status changes
+  if (status !== oldStatus) {
+    patient.status = status;
+    
+    if (status === 'in-progress' && !patient.startTime) {
+      patient.startTime = new Date();
+    } else if (status === 'completed' && !patient.endTime) {
+      patient.endTime = new Date();
+    }
+  }
+  
+  // Update UI
+  updateDepartmentCounts();
+  saveData();
+  renderStats();
+  renderQueue();
+  renderDepartments();
+  
+  // Close modal
+  editPatientModal.style.display = 'none';
+  editPatientForm.reset();
+  currentEditingPatientId = null;
 }
 
 // Start treatment for a patient
