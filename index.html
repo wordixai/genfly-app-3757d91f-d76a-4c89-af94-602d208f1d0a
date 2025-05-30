@@ -1,34 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-    <meta name="description" content="genfly Generated Project" />
-    <meta name="author" content="genfly" />
-    <meta property="og:image" content="/og-image.png" />
-    <script>
-      window.addEventListener('error', (event) => {
-          window.parent.postMessage({
-            message: event.message,
-            error: event.error
-          }, '*')
-      });
-
-      console.error = new Proxy(console.error, {
-        apply: function(target, thisArg, args) {
-          window.parent.postMessage({
-            message: args,
-            error: args
-          }, '*')
-          return target.apply(thisArg, args);
-        }
-      });
-      
-    </script>  
-
+    <title>医院门诊排队系统</title>
+    <meta name="description" content="医院门诊排队系统" />
   </head>
-
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
