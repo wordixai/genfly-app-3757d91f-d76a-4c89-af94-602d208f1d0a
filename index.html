@@ -1,36 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-    <meta name="description" content="genfly Generated Project" />
-    <meta name="author" content="genfly" />
-    <meta property="og:image" content="/og-image.png" />
-    <script>
-      window.addEventListener('error', (event) => {
-          window.parent.postMessage({
-            message: event.message,
-            error: event.error
-          }, '*')
-      });
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Queue Management System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Hospital Queue Management</h1>
+      <div class="header-controls">
+        <div class="date-time">
+          <span id="current-date"></span>
+          <span id="current-time"></span>
+        </div>
+        <button id="theme-toggle" class="btn">Dark Mode</button>
+      </div>
+    </header>
 
-      console.error = new Proxy(console.error, {
-        apply: function(target, thisArg, args) {
-          window.parent.postMessage({
-            message: args,
-            error: args
-          }, '*')
-          return target.apply(thisArg, args);
-        }
-      });
-      
-    </script>  
+    <main>
+      <div class="dashboard">
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3>Total Patients</h3>
+            <p id="total-patients">0</p>
+          </div>
+          <div class="stat-card">
+            <h3>Waiting</h3>
+            <p id="waiting-patients">0</p>
+          </div>
+          <div class="stat-card">
+            <h3>In Treatment</h3>
+            <p id="in-treatment">0</p>
+          </div>
+          <div class="stat-card">
+            <h3>Completed</h3>
+            <p id="completed">0</p>
+          </div>
+        </div>
 
-  </head>
+        <div class="queue-section">
+          <div class="section-header">
+            <h2>Patient Queue</h2>
+            <button id="add-patient" class="btn btn-primary">Add Patient</button>
+          </div>
+          
+          <div class="queue-container">
+            <div class="queue-header">
+              <div class="queue-col">Token #</div>
+              <div class="queue-col">Patient Name</div>
+              <div class="queue-col">Department</div>
+              <div class="queue-col">Wait Time</div>
+              <div class="queue-col">Status</div>
+              <div class="queue-col">Actions</div>
+            </div>
+            <div id="queue-list" class="queue-list">
+              <!-- Queue items will be added here dynamically -->
+            </div>
+          </div>
+        </div>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <div class="departments-section">
+          <h2>Departments Status</h2>
+          <div class="departments-container" id="departments-container">
+            <!-- Department cards will be added here dynamically -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Patient Modal -->
+  <div id="add-patient-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add New Patient</h2>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="patient-form">
+          <div class="form-group">
+            <label for="patient-name">Patient Name</label>
+            <input type="text" id="patient-name" required>
+          </div>
+          <div class="form-group">
+            <label for="patient-age">Age</label>
+            <input type="number" id="patient-age" min="0" max="120" required>
+          </div>
+          <div class="form-group">
+            <label for="patient-gender">Gender</label>
+            <select id="patient-gender" required>
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="patient-department">Department</label>
+            <select id="patient-department" required>
+              <option value="">Select Department</option>
+              <option value="general">General Medicine</option>
+              <option value="cardiology">Cardiology</option>
+              <option value="orthopedics">Orthopedics</option>
+              <option value="pediatrics">Pediatrics</option>
+              <option value="neurology">Neurology</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="patient-priority">Priority</label>
+            <select id="patient-priority" required>
+              <option value="normal">Normal</option>
+              <option value="urgent">Urgent</option>
+              <option value="emergency">Emergency</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add to Queue</button>
+            <button type="button" class="btn btn-secondary" id="cancel-add">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
